@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">CardBossApp</string>
+    <string name="init_dev">Init Device</string>
+    <string name="reset_card">reset Card</string>
+    <string name="set_m1card_test">M1Card_Test</string>
+    <string name="read_card_setting">Read the card operation</string>
+    <string name="write_card">Write</string>
+
+    <string name="hint_read_card_sector">(int)input the sector you want to read</string>
+    <string name="hint_read_index">(int)input which block of the read sector</string>
+    <string name="hint_read_key"> input the key to read the card, default is 12 F</string>
+
+    <string name="hint_write_card_sector">(int)input the sector you want to write</string>
+    <string name="hint_write_index">(int)input which block to write to the sector</string>
+    <string name="hint_write_key_type"> input the key type (Hexadecimal) of the read-write card, default is 0x0b</string>
+    <string name="hint_write_key">input the key to write the card, default is 12 F</string>
+
+
+    <string name="read_card">Read</string>
+    <string name="m1_read_result">ResultOfReading : </string>
+
+    <string name="write_card_setting">Write the card operation</string>
+    <string name="m1_write_value">StatusOfWrite is: </string>
+
+</resources>
