@@ -22,4 +22,6 @@
     <string name="write_card_setting">Write the card operation</string>
     <string name="m1_write_value">StatusOfWrite is: </string>
 
+    <string name="not_find_card">not find the card !</string>
+
 </resources>
