@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Toast mToast;
     private String mReadOrWriteKeyHexStr;
     TerminalConsumeDataForSystem terminal;
-    private EditText mEditxt_sector_read , mEditxt_read_index;
+    private EditText mEditxt_sector_read , mEditxt_read_index ,mEditxt_read_key_type ,mEditxt_read_key;
     private TextView mRead_result;
 
     @Override
@@ -49,8 +49,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mEditxt_sector_read = findViewById(R.id.mEditxt_sector_read);
-        mEditxt_read_index = findViewById(R.id.mEditxt_read_index);
+        mEditxt_sector_read = findViewById(R.id.mEditxt_sector_read);//扇区 取值10号扇区
+        mEditxt_read_index = findViewById(R.id.mEditxt_read_index);//块 块号
+
+        mEditxt_read_key_type=findViewById(R.id.mEditxt_read_key_type);//读写操作类型 0x0a 是读 0x0b是写
+        mEditxt_read_key=findViewById(R.id.mEditxt_read_key);//读卡的秘钥 key 默认值12F 什么意思？
+
         mRead_result = findViewById(R.id.mTxtView_read_result);
 
         Button mBtn_read_card = findViewById(R.id.mBtn_read_card);

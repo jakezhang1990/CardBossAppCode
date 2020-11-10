@@ -6,8 +6,8 @@
     <string name="read_card_setting">Read the card operation</string>
     <string name="write_card">Write</string>
 
-    <string name="hint_read_card_sector">(int)input the sector you want to read</string>
-    <string name="hint_read_index">(int)input which block of the read sector</string>
+    <string name="hint_read_card_sector">(int)input the sector you want to read 扇区</string>
+    <string name="hint_read_index">(int)input which block of the read sector 块</string>
     <string name="hint_read_key"> input the key to read the card, default is 12 F</string>
 
     <string name="hint_write_card_sector">(int)input the sector you want to write</string>
