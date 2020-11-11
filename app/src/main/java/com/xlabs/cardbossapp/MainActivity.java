@@ -34,6 +34,15 @@ import com.xlabs.cardbossapp.data.KeyErrorException;
  *
  * 三：使用扇区：
  * 卡机所使识别的扇区号为 10 扇区号，扇区号由 0 开始；
+ *
+ *
+ * 卡片共16个扇区0-15，一个扇区有4个块，0-3.
+ *  keyA keyB为卡片的校验秘钥，按照卡片的校验规则即可，比如卡片是用keyA校验，填keyA，用keyB校验就填keyB。
+ *  序列号是从SDK的cardReset（）读出来的。
+ *
+ *  卡片用的keyA，还是keyB，常规验证密码需要和卡片厂家沟通。
+ *  结果：
+ *      采用keyA。初始秘钥12个F，也就是FFFFFFFFFFFF. 也有可能是其他的。待确认。这个秘钥是否是动态变化的。
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
