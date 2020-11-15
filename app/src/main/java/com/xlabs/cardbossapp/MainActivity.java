@@ -2,6 +2,8 @@ package com.xlabs.cardbossapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cardlan.twoshowinonescreen.CardLanStandardBus;
 import com.cardlan.utils.ByteUtil;
 import com.xlabs.cardbossapp.util.CardReadWriteUtil;
 import com.xlabs.cardbossapp.data.KeyErrorException;
@@ -44,9 +47,15 @@ import com.xlabs.cardbossapp.data.KeyErrorException;
  *  结果：
  *      采用keyA。初始秘钥12个F，也就是FFFFFFFFFFFF. 也有可能是其他的。待确认。这个秘钥是否是动态变化的。
  */
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends Activity/*AppCompatActivity*/ implements View.OnClickListener {
 
     CardReadWriteUtil mReadWriteUtil = new CardReadWriteUtil();
+    CardLanStandardBus mCardLanDevCtrl = new CardLanStandardBus();
+    private TextView mInitDev_status_value;
+
+    private TextView mTvResetCard;
+    private TextView mWrite_value;
+
     Toast mToast;
     private String mReadOrWriteKeyHexStr;
     TerminalConsumeDataForSystem terminal;
@@ -57,6 +66,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button mBtn_initDev = findViewById(R.id.mBtn_initDev);
+        mBtn_initDev.setOnClickListener(this);
+        mInitDev_status_value = findViewById(R.id.mTxtView_initDev_status_value);
+
+        Button mBtn_reset_card = findViewById(R.id.mBtn_reset_card);
+        mBtn_reset_card.setOnClickListener(this);
+        mTvResetCard = findViewById(R.id.tv_reset_card);
+
+        Button mBtn_write_card = findViewById(R.id.mBtn_write_card);
+        mBtn_write_card.setOnClickListener(this);
+        mWrite_value = findViewById(R.id.mTxtView_write_statusvalue);
+
 
         mEditxt_sector_read = findViewById(R.id.mEditxt_sector_read);//扇区 取值10号扇区
         mEditxt_read_index = findViewById(R.id.mEditxt_read_index);//块 块号
@@ -73,10 +95,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        String rkey = mEditxt_read_key_type.getText().toString();
+        Toast.makeText(this, "rkey="+rkey, Toast.LENGTH_SHORT).show();
+
         char readSector = stringToChar(mEditxt_sector_read.getText().toString());
         char readindex = stringToChar(mEditxt_read_index.getText().toString());
 
-        if (v.getId()==R.id.mBtn_read_card){
+        if(v.getId()==R.id.mBtn_initDev){
+            //init Devices 初始化之后才可以读写
+            int initResult = mCardLanDevCtrl.callInitDev();
+            if (0 == initResult || -2 == initResult || -3 == initResult || -4 == initResult) {
+                mInitDev_status_value.setText(getResources().getString(R.string.init_dev) + " success!");
+
+            } else {
+                mInitDev_status_value.setText(getResources().getString(R.string.init_dev) + " failure!");
+            }
+            showToast(mInitDev_status_value.getText().toString());
+        }else if(v.getId()==R.id.mBtn_reset_card){
+            //reset
+
+            mReadOrWriteKeyHexStr = null;
+//                byte[] cardNumber = new byte[S_Reset_buffer_size];
+//                int cardResult = mCardLanDevCtrl.callCardReset(cardNumber);
+            byte[] resetbyte = mReadWriteUtil.getCardResetBytes();
+            if (ByteUtil.notNull(resetbyte)) {
+                mReadOrWriteKeyHexStr = ByteUtil.byteArrayToHexString(resetbyte);
+                mTvResetCard.setText(mReadOrWriteKeyHexStr);
+
+            } else {
+                showToast("reset：failure!");
+                mTvResetCard.setText("");
+            }
+        }else if (v.getId()==R.id.mBtn_read_card){
+            //read M1 card
+
             byte[] resetByte = mReadWriteUtil.getCardResetBytes();
             if (!ByteUtil.notNull(resetByte)) {
                 showToast(getResources().getString(R.string.not_find_card));
@@ -97,6 +149,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ByteUtil.byteToHex(index), mReadOrWriteKeyHexStr, null);
             if (ByteUtil.notNull(readTemp)) {
                 mRead_result.setText(ByteUtil.byteArrayToHexString(readTemp));
+            }
+            showToast(ByteUtil.byteArrayToHexString(readTemp));
+        }else if(v.getId()==R.id.mBtn_write_card){
+            //write M1 card
+
+            mReadOrWriteKeyHexStr = null;
+            byte[] resetBytes = mReadWriteUtil.getCardResetBytes();
+            if (!ByteUtil.notNull(resetBytes)) {
+                showToast(getResources().getString(R.string.not_find_card));
+                return;
+            }
+            try {
+                mReadOrWriteKeyHexStr = ByteUtil.byteArrayToHexString
+                        (terminal.calculateNormalCardKey(resetBytes));
+            } catch (KeyErrorException e) {
+                e.printStackTrace();
+            }
+
+            //int money= 100000;
+            int writeResult = mReadWriteUtil.callWriteJNI("4",
+                    "1",
+                    ByteUtil.byteArrayToHexString(new byte[4]),
+                    mReadOrWriteKeyHexStr, null);
+            if (writeResult == 5) {
+                mWrite_value.setText(getResources().getString(R.string.m1_write_value) + writeResult);
+                showToast(getResources().getString(R.string.writing_successfully));
             }
         }
     }
