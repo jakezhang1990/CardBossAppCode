@@ -43,6 +43,15 @@ import com.xlabs.cardbossapp.data.KeyErrorException;
  *  卡片用的keyA，还是keyB，常规验证密码需要和卡片厂家沟通。
  *  结果：
  *      采用keyA。初始秘钥12个F，也就是FFFFFFFFFFFF. 也有可能是其他的。待确认。这个秘钥是否是动态变化的。
+ *
+ *
+ *
+ *   https://rdc.hundsun.com/portal/article/642.html
+ *
+ *    https://blog.csdn.net/ye_wei_yang/article/details/51689687
+ *
+ *  https://wenku.baidu.com/view/8dd007282af90242a895e5e1.html
+ *
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
